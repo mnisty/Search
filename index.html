@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>百度搜索</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!-- <link rel="stylesheet" href="./resources/css/bootstrap.min.css"/> -->
+    <link rel="stylesheet" href="https://lib.sinaapp.com/js/bootstrap/4.3.1/css/bootstrap.min.css"/>
+    <style>
+        * {
+            border-radius: 0;
+        }
+
+        body {
+            background: #c5f3cb;
+        }
+
+        .form-control {
+            border: 0;
+            border-radius: 0;
+        }
+
+        button.form-control {
+            background: #fff;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+        }
+
+        .input-group-alternative {
+            border-radius: 0;
+            transition: box-shadow .15s ease;
+            border: none;
+            box-shadow: 0 1px 3px rgba(50, 50, 93, .15), 0 1px 0 rgba(0, 0, 0, .02);
+        }
+
+        .input-group-alternative.focus {
+            box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08) !important;
+        }
+
+        .list-group {
+            box-shadow: 0 1px 3px rgba(50, 50, 93, .15), 0 1px 0 rgba(0, 0, 0, .02);
+        }
+
+        .list-group-item {
+            padding: .375rem .75rem !important;
+            cursor: pointer;
+        }
+
+        /**
+        * Bootstrap 列居中
+        */
+        .col-center-block {
+            float: none;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .search-logo img {
+            width: 40%;
+        }
+
+        @media screen  and (max-width: 576px) {
+            .search-logo img {
+                width: 80%;
+            }
+        }
+
+        @media screen  and (max-width: 768px) {
+            .search-logo img {
+                width: 60%;
+            }
+        }
+
+        @media screen  and (min-width: 768px) {
+            .search-bar {
+                width: 652px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <main role="main">
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-12 mt-5">
+                    <div class="search-logo">
+                        <!-- <img class="col-center-block" src="resources/img/logo.png"/> -->
+                        <img class="col-center-block" src="http://wx2.sinaimg.cn/large/006d57iNly1fszco2xl0uj30i004f74o.jpg"/>
+                        <!-- <h1 class="text-center">搜索</h1> -->
+                    </div>
+                </div>
+                <div class="col-12 mt-5">
+                    <div class="search-bar col-center-block">
+                        <div class="form-group mb-0">
+                            <div class="input-group input-group-alternative">
+                                <input type="text" class="form-control" v-model="keyword" @keyup="getSuggestion">
+                                <div class="input-group-btn">
+                                    <button class="btn form-control input-group-text" @click="clickText(keyword)">搜索</button>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="list-group border-0">
+                            <li class="list-group-item list-group-item-action border-0" style="border-radius: 0;" v-for="value in suggestions" @click="clickText(value)">
+                                {{ value }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<!-- <script src="resources/js/vue.js"></script> -->
+<!-- <script src="resources/js/vue-resource.js"></script> -->
+<script src="https://s1.pstatp.com/cdn/expire-1-M/vue/2.6.10/vue.min.js"></script>
+<script src="https://s1.pstatp.com/cdn/expire-1-M/vue-resource/0.7.0/vue-resource.min.js"></script>
+<script>
+    new Vue({
+        data: {
+            suggestions: [],
+            keyword: ''
+        },
+        methods: {
+            getSuggestion: function () {
+                if (this.keyword === '') {
+                    this.suggestions = [];
+                    return;
+                }
+                this.$http.jsonp('https://suggestion.baidu.com/su', {
+                    wd: this.keyword,
+                    cb: 'queryList'
+                }, {
+                    jsonp: 'cb'
+                }).then(function (response) {
+                    this.suggestions = response.data.s;
+                });
+            },
+            clickText: function (val) {
+                this.keyword = val;
+                window.open("https://www.baidu.com/s?ie=utf-8&wd=" + val);
+            }
+        }
+    }).$mount('#app');
+</script>
+</body>
+</html>
